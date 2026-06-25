@@ -1,15 +1,37 @@
-Welcome to your new dbt project!
+# E-Commerce dbt + Airflow Pipeline
 
-### Using the starter project
+End-to-end data pipeline for e-commerce sales analytics using dbt, Airflow, and PostgreSQL.
 
-Try running the following commands:
-- dbt run
-- dbt test
+## Stack
+- **PostgreSQL** — local data warehouse
+- **Python** — synthetic data generation (500 rows)
+- **dbt** — SQL transformations (staging → marts)
+- **Apache Airflow** — pipeline orchestration (daily schedule)
 
+## Architecture
+Raw Orders → PostgreSQL → dbt Staging → dbt Marts → Dashboard
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+## dbt Models
+- `stg_orders` — cleans raw orders, calculates total_amount
+- `mart_sales_summary` — aggregates revenue by category, product, and month
+
+## Airflow DAG
+- DAG: `ecommerce_dbt_pipeline`
+- Schedule: daily
+- Tasks: `dbt_run` → `dbt_test`
+
+## Results
+- 500 raw orders loaded
+- Revenue aggregated by category (Electronics, Clothing, Food)
+- dbt run: PASS=4 ERROR=0
+
+## Setup
+```bash
+python3 -m venv venv && source venv/bin/activate
+pip install dbt-postgres apache-airflow
+psql -d ecommerce_db -U dbt_user
+dbt run
+```
+
+## Author
+Surendra Sappa | Data Engineer
